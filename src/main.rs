@@ -1,33 +1,14 @@
-use std::io::{self, BufWriter, Write};
 use std::{thread, time};
-use terminal_size::{terminal_size, Width};
+use indicatif::ProgressBar;
 
-fn main() -> Result<(), std::io::Error> {
-    let size = terminal_size();
-    let mut terminal_width: usize = 80;
-    if let Some((Width(w), _)) = size {
-        terminal_width = w.into();
-    }
-    let progress_bar_length: usize = terminal_width - 2;
+fn main() {
     println!("Optimizing your computer, please wait...");
+    let bar = ProgressBar::new(100);
     let duration = time::Duration::from_millis(50);
-    let mut sw = BufWriter::new(io::stdout());
-    
-    for progress in 0..progress_bar_length {
-        sw.write_fmt(format_args!(
-            "\r[{}>{}]",
-            "=".repeat(progress),
-            " ".repeat(progress_bar_length - progress - 1)
-        ))?;
-        sw.flush()?;
+    for _ in 0..100 {
+        bar.inc(1);
         thread::sleep(duration);
     }
-    
-    sw.write_fmt(format_args!(
-        "\r[{}]",
-        "=".repeat(progress_bar_length)
-    ))?;
-    sw.flush()?;
+    bar.finish();
     println!("\nCongratulation, your system is faster now!");
-    Ok(())
 }
